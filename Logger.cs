@@ -237,7 +237,27 @@ namespace SteamChatLogger
                                 if (data.m_eChatEntryType == EChatEntryType.k_EChatEntryTypeChatMsg)
                                 {
                                     (EChatEntryType type, RTime32 timestamp, CSteamID senderId, string message) = this.ClientFriends.GetChatMessage(data.m_ulFriendID, data.m_iChatID);
-                                    chat.OnMessage(timestamp, senderId, this.SteamFriends.GetFriendPersonaName(senderId), message);
+
+                                    // Race condition: FriendMessageHistoryChatLog will rewrite the message indices
+                                    //                 if this is a newly opened chat.
+                                    if (type == EChatEntryType.k_EChatEntryTypeChatMsg)
+                                    {
+                                        // We won the race.
+                                        chat.OnMessage(timestamp, senderId, this.SteamFriends.GetFriendPersonaName(senderId), message);
+                                    }
+                                    else
+                                    {
+                                        // History is loaded, assume no more index shuffling
+                                        Debug.WriteLine("FriendChatMsg indices rewritten!");
+
+                                        // Message history can include messages that are marked k_EChatEntryTypeChatMsg!
+                                        // Just take the last messages instead.
+                                        // This is vulnerable to another race condition if multiple messages are received quickly.
+                                        int messageCount = this.ClientFriends.GetChatMessagesCount(data.m_ulFriendID);
+                                        (type, timestamp, senderId, message) = this.ClientFriends.GetChatMessage(data.m_ulFriendID, messageCount - 1);
+
+                                        chat.OnMessage(timestamp, senderId, this.SteamFriends.GetFriendPersonaName(senderId), message);
+                                    }
                                 }
                             }
                             break;
@@ -350,6 +370,7 @@ namespace SteamChatLogger
                             break;
                         case CallbackType.FriendMessageHistoryChatLog:
                             {
+                                Debug.WriteLine("Received callback " + callbackMsg.m_iCallback.ToString());
                                 FriendMessageHistoryChatLog data = callbackMsg.GetCallbackData<FriendMessageHistoryChatLog>();
                                 this.GetChat(data.m_ulFriendID);
                             }

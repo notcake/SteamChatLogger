@@ -13,6 +13,8 @@ namespace Steam.Callbacks
         SteamServersConnected                 = k_iSteamUserCallbacks +  1,
         [Callback(typeof(IPCFailure))]
         IPCFailure                            = k_iSteamUserCallbacks + 17,
+        [Callback(typeof(AppLifetimeNotice))]
+        AppLifetimeNotice                     = k_iSteamUserCallbacks + 30,
 
         k_iSteamFriendsCallbacks              =  300,
         [Callback(typeof(PersonaStateChange))]
@@ -65,6 +67,8 @@ namespace Steam.Callbacks
         NotifyChatRoomVoiceStateChanged       = k_iClientFriendsCallbacks + 27,
 
         k_iClientUserCallbacks                =  900,
+        [Callback(typeof(SteamServersDisconnected))]
+        SteamServersDisconnected              = k_iClientUserCallbacks +  3,
         [Callback(typeof(AccountInformationUpdated))]
         AccountInformationUpdated             = k_iClientUserCallbacks + 15,
         [Callback(typeof(UpdateGuestPasses))]
@@ -97,7 +101,11 @@ namespace Steam.Callbacks
         AppEventStateChange                   = k_iSteamAppsCallbacks + 6,
         [Callback(typeof(DownloadScheduleChanged))]
         DownloadScheduleChanged               = k_iSteamAppsCallbacks + 9,
-        
+
+        k_iSteamUserStatsCallbacks            = 1100,
+        [Callback(typeof(UserAchievementIconFetched))]
+        UserAchievementIconFetched            = k_iSteamUserStatsCallbacks + 9,
+
         k_iClientRemoteStorageCallbacks       = 1300,
         [Callback(typeof(RemoteStorageAppSyncedClient))]
         RemoteStorageAppSyncedClient          = k_iClientRemoteStorageCallbacks + 1,

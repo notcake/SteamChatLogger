@@ -217,6 +217,8 @@ namespace SteamChatLogger
             this.logFileStream.Close();
             this.logFileStream.Dispose();
             this.logFileStream = null;
+
+            this.Committed?.Invoke();
         }
         #endregion
     }

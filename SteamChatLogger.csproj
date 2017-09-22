@@ -146,6 +146,7 @@
     <Compile Include="Steam\Callbacks\AppEventStateChange.cs" />
     <Compile Include="Steam\AppId.cs" />
     <Compile Include="Steam\Callbacks\AppInfoUpdateComplete.cs" />
+    <Compile Include="Steam\Callbacks\AppLifetimeNotice.cs" />
     <Compile Include="Steam\Callbacks\AppMinutesPlayedDataNotice.cs" />
     <Compile Include="Steam\Callbacks\AppOwnershipTicketReceived.cs" />
     <Compile Include="Steam\Callbacks\CallbackAttribute.cs" />
@@ -175,8 +176,10 @@
     <Compile Include="Steam\Callbacks\RemoteStorageAppSyncedClient.cs" />
     <Compile Include="Steam\Callbacks\RemoteStorageAppSyncStatusCheck.cs" />
     <Compile Include="Steam\Callbacks\SteamServersConnected.cs" />
+    <Compile Include="Steam\Callbacks\SteamServersDisconnected.cs" />
     <Compile Include="Steam\Callbacks\UpdateGuestPasses.cs" />
     <Compile Include="Steam\Callbacks\UpdateOfflineMessageNotification.cs" />
+    <Compile Include="Steam\Callbacks\UserAchievementIconFetched.cs" />
     <Compile Include="Steam\Callbacks\UserRequestingFriendship.cs" />
     <Compile Include="Steam\Callbacks\WalletBalanceUpdated.cs" />
     <Compile Include="Steam\Callbacks\WebAuthRequestCallback.cs" />
