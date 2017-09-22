@@ -196,7 +196,7 @@ namespace SteamChatLogger
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timestamp.Value);
             this.AdvanceTime(dateTimeOffset);
-            this.AppendLine(dateTimeOffset.ToString("HH:mm") + " - " + line);
+            this.AppendLine(dateTimeOffset.LocalDateTime.ToString("HH:mm") + " - " + line);
         }
 
         private void AppendLine(string line)

@@ -39,6 +39,7 @@ namespace SteamChatLogger
         private IClientApps001 ClientApps = null;
         private HSteamPipe HSteamPipe = HSteamPipe.Null;
         private HSteamUser HSteamUser = HSteamUser.Null;
+        private bool Online = true;
 
         private CSteamID LocalSteamId = new CSteamID(0);
 
@@ -113,6 +114,7 @@ namespace SteamChatLogger
             this.ClientFriends = this.ClientEngine.GetIClientFriends(this.HSteamUser, this.HSteamPipe);
             this.ClientApps = this.ClientEngine.GetIClientApps(this.HSteamUser, this.HSteamPipe);
 
+            this.Online = true;
             this.LocalSteamId = this.SteamUser.GetSteamID();
             Debug.WriteLine("Local SteamID is " + this.LocalSteamId.UInt64.ToString());
 
@@ -146,7 +148,7 @@ namespace SteamChatLogger
             }
             while (!this.ConnectionThreadAbortionEvent.WaitOne(1000));
         }
-
+        
         private void ListenerThreadProc()
         {
             // Scan existing group chats
@@ -196,6 +198,8 @@ namespace SteamChatLogger
                                 {
                                     if (data.m_nChangeFlags.HasFlag(EPersonaChange.k_EPersonaChangeComeOnline))
                                     {
+                                        this.Online = true;
+
                                         foreach (SteamChat chat in this.chats.Values)
                                         {
                                             chat.OnRegainedConnection(RTime32.Now);
@@ -203,6 +207,8 @@ namespace SteamChatLogger
                                     }
                                     else if (data.m_nChangeFlags.HasFlag(EPersonaChange.k_EPersonaChangeGoneOffline))
                                     {
+                                        this.Online = false;
+
                                         foreach (SteamChat chat in this.chats.Values)
                                         {
                                             chat.OnLostConnection(RTime32.Now);
@@ -211,20 +217,21 @@ namespace SteamChatLogger
                                 }
 
                                 // Remote user status
-                                if (!data.m_nChangeFlags.HasFlag(EPersonaChange.k_EPersonaChangeComeOnline) &&
-                                    !data.m_nChangeFlags.HasFlag(EPersonaChange.k_EPersonaChangeGoneOffline))
-                                {
+                                if (this.Online) {
                                     SteamChat chat = this.PeekChat(data.m_ulSteamID);
-                                    if (data.m_nChangeFlags.HasFlag(EPersonaChange.k_EPersonaChangeStatus))
+                                    if (chat != null)
                                     {
-                                        chat?.OnStatusChanged(RTime32.Now, data.m_ulSteamID, this.SteamFriends.GetFriendPersonaName(data.m_ulSteamID), this.SteamFriends.GetFriendPersonaState(data.m_ulSteamID));
-                                    }
-                                    else if (data.m_nChangeFlags.HasFlag(EPersonaChange.k_EPersonaChangeGamePlayed) ||
-                                             data.m_nChangeFlags.HasFlag(EPersonaChange.k_EPersonaChangeGameServer))
-                                    {
-                                        this.SteamFriends.GetFriendGamePlayed(data.m_ulSteamID, out FriendGameInfo friendGameInfo);
-                                        string gameName = friendGameInfo.m_gameID.m_nAppID.Value != 0 ? this.ClientApps.GetAppData(friendGameInfo.m_gameID.m_nAppID, "name") : null;
-                                        chat?.OnGameChanged(RTime32.Now, data.m_ulSteamID, this.SteamFriends.GetFriendPersonaName(data.m_ulSteamID), friendGameInfo, gameName);
+                                        if (data.m_nChangeFlags.HasFlag(EPersonaChange.k_EPersonaChangeStatus))
+                                        {
+                                            chat?.OnStatusChanged(RTime32.Now, data.m_ulSteamID, this.SteamFriends.GetFriendPersonaName(data.m_ulSteamID), this.SteamFriends.GetFriendPersonaState(data.m_ulSteamID));
+                                        }
+                                        else if (data.m_nChangeFlags.HasFlag(EPersonaChange.k_EPersonaChangeGamePlayed) ||
+                                                    data.m_nChangeFlags.HasFlag(EPersonaChange.k_EPersonaChangeGameServer))
+                                        {
+                                            this.SteamFriends.GetFriendGamePlayed(data.m_ulSteamID, out FriendGameInfo friendGameInfo);
+                                            string gameName = friendGameInfo.m_gameID.m_nAppID.Value != 0 ? this.ClientApps.GetAppData(friendGameInfo.m_gameID.m_nAppID, "name") : null;
+                                            chat?.OnGameChanged(RTime32.Now, data.m_ulSteamID, this.SteamFriends.GetFriendPersonaName(data.m_ulSteamID), friendGameInfo, gameName);
+                                        }
                                     }
                                 }
                             }
@@ -255,7 +262,7 @@ namespace SteamChatLogger
                                         // This is vulnerable to another race condition if multiple messages are received quickly.
                                         int messageCount = this.ClientFriends.GetChatMessagesCount(data.m_ulFriendID);
                                         (type, timestamp, senderId, message) = this.ClientFriends.GetChatMessage(data.m_ulFriendID, messageCount - 1);
-
+                                        Debug.WriteLine("Index " + (messageCount - 1).ToString("X8") + " " + type.ToString() + ": " + message);
                                         chat.OnMessage(timestamp, senderId, this.SteamFriends.GetFriendPersonaName(senderId), message);
                                     }
                                 }
@@ -370,9 +377,15 @@ namespace SteamChatLogger
                             break;
                         case CallbackType.FriendMessageHistoryChatLog:
                             {
-                                Debug.WriteLine("Received callback " + callbackMsg.m_iCallback.ToString());
                                 FriendMessageHistoryChatLog data = callbackMsg.GetCallbackData<FriendMessageHistoryChatLog>();
+                                Debug.WriteLine("FriendMessageHistoryChatLog " + data.m_ulFriendID.UInt64.ToString() + " " + data.m_iFirstMessageID.ToString("X8") + " to " + data.m_iLastMessageID.ToString("X8"));
                                 this.GetChat(data.m_ulFriendID);
+
+                                if (data.m_EResult == EResult.k_EResultOK)
+                                {
+                                    (EChatEntryType type, RTime32 timestamp, CSteamID senderId, string message) = this.ClientFriends.GetChatMessage(data.m_ulFriendID, data.m_iLastMessageID);
+                                    Debug.WriteLine("Index " + data.m_iLastMessageID.ToString("X8") + " " + type.ToString() + ": " + message);
+                                }
                             }
                             break;
                         default:
