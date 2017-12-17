@@ -34,7 +34,7 @@ namespace SteamChatLogger
         private ISteamFriends015 SteamFriends = null;
         private ISteamAppList001 SteamAppList = null;
         private ISteamUser019 SteamUser = null;
-        private IClientEngine004 ClientEngine = null;
+        private IClientEngine005 ClientEngine = null;
         private IClientFriends001 ClientFriends = null;
         private IClientApps001 ClientApps = null;
         private HSteamPipe HSteamPipe = HSteamPipe.Null;

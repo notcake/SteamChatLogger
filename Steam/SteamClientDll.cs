@@ -46,7 +46,7 @@ namespace Steam
         }
 
         public ISteamClient017 SteamClient { get; } = Exports.CreateInterface<ISteamClient017>();
-        public IClientEngine004 ClientEngine { get; } = Exports.CreateInterface<IClientEngine004>();
+        public IClientEngine005 ClientEngine { get; } = Exports.CreateInterface<IClientEngine005>();
 
         #region IDisposable
         public void Dispose()

@@ -228,6 +228,7 @@
     <Compile Include="Steam\HVoiceCall.cs" />
     <Compile Include="Steam\IClientApps001.cs" />
     <Compile Include="Steam\IClientEngine004.cs" />
+    <Compile Include="Steam\IClientEngine005.cs" />
     <Compile Include="Steam\IClientFriends001.cs" />
     <Compile Include="Steam\IClientFriends001_Outdated.cs" />
     <Compile Include="Steam\InterfaceNameAttribute.cs" />
