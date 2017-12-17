@@ -13,7 +13,7 @@ namespace Steam
 		private static class Exports
         {
             [DllImport("steamclient64.dll")]
-            public static extern IntPtr CreateInterface(string name);
+            public static extern IntPtr CreateInterface(string name, out bool success);
 
             [DllImport("steamclient64.dll")]
             public static extern bool Steam_BGetCallback(HSteamPipe hSteamPipe, out CallbackMsg callbackMsg);
@@ -23,6 +23,11 @@ namespace Steam
 
             [DllImport("steamclient64.dll")]
             public static extern void Steam_ReleaseThreadLocalMemory();
+
+            public static IntPtr CreateInterface(string name)
+            {
+                return Exports.CreateInterface(name, out _);
+            }
 
             public static T CreateInterface<T>()
                 where T : class
