@@ -230,6 +230,7 @@
     <Compile Include="Steam\IClientEngine004.cs" />
     <Compile Include="Steam\IClientEngine005.cs" />
     <Compile Include="Steam\IClientFriends001.cs" />
+    <Compile Include="Steam\IClientFriends001_4_12_93_61.cs" />
     <Compile Include="Steam\IClientFriends001_Outdated.cs" />
     <Compile Include="Steam\InterfaceNameAttribute.cs" />
     <Compile Include="Steam\ISteamAppList001.cs" />

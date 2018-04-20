@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Steam
 {
-    // Valid for steamclient64.dll 4.44.85.6
+    // Valid for steamclient64.dll 4.12.93.61
     [InterfaceName("CLIENTFRIENDS_INTERFACE_VERSION001")]
-    public interface IClientFriends001
+    public interface IClientFriends001_4_12_93_61
     {
         string GetPersonaName();
 
@@ -59,9 +59,6 @@ namespace Steam
         FriendSessionStateInfo GetFriendSessionStateInfo(CSteamID steamIDFriend);
 
         EUserRestriction GetFriendRestrictions(CSteamID steamIDFriend);
-
-        // unknown return type
-        IntPtr GetFriendBroadcastID(CSteamID steamIDFriend);
 
         string GetFriendPersonaNameHistory(CSteamID steamIDFriend, int iPersonaName);
         SteamAPICall RequestPersonaNameHistory(CSteamID steamIDFriend);
@@ -328,7 +325,6 @@ namespace Steam
 
 
         CSteamID GetFriendWhoPlaysGame(uint iIndex, CGameID gameID);
-        uint GetCountFriendsInGame(CGameID gameID);
 
         void SetPlayedWith(CSteamID steamIDUserPlayedWith);
 
@@ -373,58 +369,5 @@ namespace Steam
 
         void ClientLinkFilterInit();
         uint LinkDisposition(string url);
-    }
-
-    public static class IClientFriends001Extension
-    {
-        public static CSteamID GetChatRoomByIndex(this IClientFriends001 clientFriends, int iChatRoom)
-        {
-            clientFriends.GetChatRoomByIndex(out CSteamID steamIDChat, iChatRoom);
-            return steamIDChat;
-        }
-
-        private static ThreadLocal<byte[]> messageBuffer = new ThreadLocal<byte[]>(() => new byte[16384]);
-        public static (EChatEntryType, RTime32, CSteamID, string) GetChatMessage(this IClientFriends001 clientFriends, CSteamID steamIDFriend, int iMessageID)
-        {
-            byte[] message = messageBuffer.Value;
-            int cubData = clientFriends.GetChatMessage(steamIDFriend, iMessageID, message, message.Length, out EChatEntryType eChatEntryType, out CSteamID steamIDChatter, out RTime32 uTime);
-
-            return (eChatEntryType, uTime, steamIDChatter, Encoding.UTF8.GetString(message, 0, Math.Max(0, cubData - 1)));
-        }
-
-        public static (EChatEntryType, CSteamID, string) GetClanChatMessage(this IClientFriends001 clientFriends, CSteamID steamIDFriend, int iMessageID)
-        {
-            byte[] message = messageBuffer.Value;
-            int cubData = clientFriends.GetClanChatMessage(steamIDFriend, iMessageID, message, message.Length, out EChatEntryType eChatEntryType, out CSteamID steamIDChatter);
-
-            return (eChatEntryType, steamIDChatter, Encoding.UTF8.GetString(message, 0, Math.Max(0, cubData - 1)));
-        }
-
-        public static (EChatEntryType, string) GetFriendMessage(this IClientFriends001 clientFriends, CSteamID steamIDFriend, int iMessageID)
-        {
-            byte[] message = messageBuffer.Value;
-            int cubData = clientFriends.GetFriendMessage(steamIDFriend, iMessageID, message, message.Length, out EChatEntryType eChatEntryType);
-
-            return (eChatEntryType, Encoding.UTF8.GetString(message, 0, Math.Max(0, cubData - 1)));
-        }
-
-        public static (EChatEntryType, CSteamID, string) GetChatRoomEntry(this IClientFriends001 clientFriends, CSteamID steamID, int iMessageID)
-        {
-            byte[] message = messageBuffer.Value;
-            int cubData = clientFriends.GetChatRoomEntry(steamID, iMessageID, out CSteamID steamIDuser, message, message.Length, out EChatEntryType eChatEntryType);
-
-            return (eChatEntryType, steamIDuser, Encoding.UTF8.GetString(message, 0, Math.Max(0, cubData - 1)));
-        }
-
-        private static ThreadLocal<CSteamID[]> steamIdBuffer = new ThreadLocal<CSteamID[]>(() => new CSteamID[1]);
-        public static (EChatEntryType, CSteamID, CSteamID) GetChatRoomEntryAction(this IClientFriends001 clientFriends, CSteamID steamID, int iMessageID)
-        {
-            byte[] data = messageBuffer.Value;
-            int cubData = clientFriends.GetChatRoomEntry(steamID, iMessageID, out CSteamID steamIDuser, data, data.Length, out EChatEntryType eChatEntryType);
-
-            CSteamID[] steamId = steamIdBuffer.Value;
-            Buffer.BlockCopy(data, 0, steamId, 0, Marshal.SizeOf<CSteamID>());
-            return (eChatEntryType, steamIDuser, steamId[0]);
-        }
     }
 }

@@ -37,6 +37,55 @@ namespace Steam
             return instance;
         }
 
+        public static void Dump<T>()
+        {
+            MethodInfo[] methods = typeof(T).GetMethods().OrderBy(x => x.MetadataToken).ToArray();
+            for (int i = 0; i < methods.Length; i++)
+            {
+                Debug.WriteLine("[" + i.ToString() + "] " + methods[i].Name);
+            }
+        }
+
+        public static void Dump(IntPtr pInstance)
+        {
+            if (pInstance == IntPtr.Zero) { return; }
+
+            IntPtr pVtable = Marshal.ReadIntPtr(pInstance);
+            for (int i = 0; ; i++)
+            {
+                IntPtr pFunction = Marshal.ReadIntPtr(pVtable + IntPtr.Size * i);
+                if (pFunction.ToInt64() > 0x0000010000000000) { break; }
+
+                bool foundName = false;
+                for (int j = 0; ; j++)
+                {
+                    byte uint8 = Marshal.ReadByte(pFunction, j);
+                    if (uint8 == 0x48 &&
+                        Marshal.ReadByte(pFunction, j + 1) == 0x8d &&
+                        Marshal.ReadByte(pFunction, j + 2) == 0x0d)
+                    {
+                        // 48 8d 0d <imm32> (lea rcx, ...)
+                        int offset = Marshal.ReadInt32(pFunction, j + 3);
+                        string methodName = Marshal.PtrToStringAnsi(pFunction + j + offset + 7);
+                        foundName = true;
+                        Debug.WriteLine("[" + i.ToString() + "] " + methodName);
+                        break;
+                    }
+                    if (uint8 == 0xC3 &&
+                        Marshal.ReadByte(pFunction, j + 1) == 0x48)
+                    {
+                        // c3 (ret)
+                        break;
+                    }
+                }
+
+                if (!foundName)
+                {
+                    Debug.WriteLine("[" + i.ToString() + "] ????");
+                }
+            }
+        }
+
         public static string GetName<T>()
             where T : class
         {
