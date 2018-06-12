@@ -34,6 +34,7 @@ namespace Steam
         IntPtr GetIClientMatchmaking(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
         IntPtr GetIClientApps(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
         IntPtr GetIClientMatchmakingServers(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
+        IntPtr GetIClientGameSearch(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
 
         void RunFrame();
         uint GetIPCCallCount();
@@ -82,12 +83,28 @@ namespace Steam
         IntPtr GetIClientRemoteClientManager(HSteamPipe hSteamPipe, string pchVersion);
         IntPtr GetIClientStreamClient(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
         IntPtr GetIClientShortcuts(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
-        IntPtr GetIClientRemoteControlManager(HSteamPipe hSteamPipe, string pchVersion);
-
-        IntPtr Set_ClientAPI_CPostAPIResultInProcess(/* Action<ulong, IntPtr, uint, int> */ IntPtr f);
-        IntPtr Remove_ClientAPI_CPostAPIResultInProcess(/* Action<ulong, IntPtr, uint, int> */ IntPtr f);
         IntPtr GetIClientUGC(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
-        IntPtr GetIClientVR(string pchVersion);
+        IntPtr GetIClientInventory(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
+        IntPtr GetIClientVR(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
+        IntPtr GetIClientGameNotifications(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
+        IntPtr GetIClientHTMLSurface(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
+        IntPtr GetIClientVideo(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
+        IntPtr GetIClientControllerSerialized(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
+        IntPtr GetIClientAppDisableUpdate(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
+
+        void Set_Client_API_CCheckCallbackRegisteredInProcess(/* Func<int, int> */ IntPtr pFunction);
+
+        IntPtr GetIClientBluetoothManager(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
+        IntPtr GetIClientSharedConnection(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
+        IntPtr GetIClientNetworkingSocketsSerialized(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion);
+
+        void Unknown1();
+        void Unknown2();
+
+        IntPtr GetIPCServerMap();
+        void OnDebugTextArrived(string pchDebugText);
+        void OnThreadLocalRegistration();
+        void OnThreadBuffersOverLimit();
     }
 
     public static class IClientEngine005Extension
