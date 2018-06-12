@@ -15,6 +15,8 @@ namespace Steam.Callbacks
         IPCFailure                            = k_iSteamUserCallbacks + 17,
         [Callback(typeof(AppLifetimeNotice))]
         AppLifetimeNotice                     = k_iSteamUserCallbacks + 30,
+        [Callback(typeof(EncryptedAppTicketResponse))]
+        EncryptedAppTicketResponse            = k_iSteamUserCallbacks + 54,
 
         k_iSteamFriendsCallbacks              =  300,
         [Callback(typeof(PersonaStateChange))]
@@ -31,6 +33,12 @@ namespace Steam.Callbacks
         k_iSteamUtilsCallbacks                =  700,
         [Callback(typeof(SteamConfigStoreChanged))]
         SteamConfigStoreChanged               = k_iSteamUtilsCallbacks + 11,
+        [Callback(typeof(SteamChatNotification_))]
+        SteamChatNotification_                = k_iSteamUtilsCallbacks + 23,
+        [Callback(typeof(SteamChatNotificationFinished_))]
+        SteamChatNotificationFinished_        = k_iSteamUtilsCallbacks + 24,
+        [Callback(typeof(ComputerActiveStateChange))]
+        ComputerActiveStateChange             = k_iSteamUtilsCallbacks + 26,
 
         k_iClientFriendsCallbacks             =  800,
         [Callback(typeof(FriendAdded))]

@@ -165,6 +165,7 @@
     <Compile Include="Steam\Callbacks\DownloadScheduleChanged.cs" />
     <Compile Include="Steam\Callbacks\EChatRoomEnterResponse.cs" />
     <Compile Include="Steam\Callbacks\EFailureType.cs" />
+    <Compile Include="Steam\Callbacks\EncryptedAppTicketResponse.cs" />
     <Compile Include="Steam\Callbacks\FavoritesListChanged.cs" />
     <Compile Include="Steam\Callbacks\FavoritesListChangedOld.cs" />
     <Compile Include="Steam\Callbacks\FriendAdded.cs" />
@@ -175,6 +176,10 @@
     <Compile Include="Steam\Callbacks\RemoteStorageAppInfoLoaded.cs" />
     <Compile Include="Steam\Callbacks\RemoteStorageAppSyncedClient.cs" />
     <Compile Include="Steam\Callbacks\RemoteStorageAppSyncStatusCheck.cs" />
+    <Compile Include="Steam\Callbacks\SteamChatNotificationFinished_.cs" />
+    <Compile Include="Steam\Callbacks\ComputerActiveStateChange.cs" />
+    <Compile Include="Steam\Callbacks\SteamChatNotificationType_.cs" />
+    <Compile Include="Steam\Callbacks\SteamChatNotification_.cs" />
     <Compile Include="Steam\Callbacks\SteamServersConnected.cs" />
     <Compile Include="Steam\Callbacks\SteamServersDisconnected.cs" />
     <Compile Include="Steam\Callbacks\UpdateGuestPasses.cs" />

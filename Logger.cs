@@ -167,6 +167,7 @@ namespace SteamChatLogger
 
                 while (this.SteamClientDll.Steam_BGetCallback(this.HSteamPipe, out CallbackMsg callbackMsg))
                 {
+                    Debug.WriteLine("Received callback " + callbackMsg.m_iCallback.ToString());
                     switch (callbackMsg.m_iCallback)
                     {
                         case CallbackType.IPCFailure:
@@ -234,6 +235,12 @@ namespace SteamChatLogger
                                         }
                                     }
                                 }
+                            }
+                            break;
+                        case CallbackType.SteamChatNotification_:
+                            {
+                                SteamChatNotification_ notification = callbackMsg.GetCallbackData<SteamChatNotification_>();
+                                Debug.WriteLine(notification.m_uiType.ToString() + " " + notification.m_uiIndex.ToString("X8") + " " + notification.m_rgchData);
                             }
                             break;
                         case CallbackType.FriendChatMsg:
@@ -390,7 +397,6 @@ namespace SteamChatLogger
                             break;
                         default:
                             // Print unknown callbacks
-                            Debug.WriteLine("Received callback " + callbackMsg.m_iCallback.ToString());
                             if (Enum.GetName(typeof(CallbackType), callbackMsg.m_iCallback) == null)
                             {
                                 Debug.WriteLine("\t" + BitConverter.ToString(callbackMsg.GetRawData()).Replace('-', ' '));
