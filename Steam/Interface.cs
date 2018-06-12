@@ -54,7 +54,7 @@ namespace Steam
             for (int i = 0; ; i++)
             {
                 IntPtr pFunction = Marshal.ReadIntPtr(pVtable + IntPtr.Size * i);
-                if (pFunction.ToInt64() > 0x0000010000000000) { break; }
+                if (pFunction.ToInt64() > 0x0001000000000000) { break; }
 
                 bool foundName = false;
                 for (int j = 0; ; j++)
