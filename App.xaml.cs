@@ -35,20 +35,17 @@ namespace SteamChatLogger
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            
+            this.TrayIcon = new TaskbarIcon();
+            this.TrayIcon.TrayMouseDoubleClick += this.TrayIcon_TrayMouseDoubleClick;
 
-            if (!Debugger.IsAttached)
-            {
-                this.TrayIcon = new TaskbarIcon();
-                this.TrayIcon.TrayMouseDoubleClick += this.TrayIcon_TrayMouseDoubleClick;
-
-                ContextMenu contextMenu = new ContextMenu();
-                MenuItem exitMenuItem = new MenuItem();
-                contextMenu.Items.Add(exitMenuItem);
-                exitMenuItem.Header = "E_xit";
-                exitMenuItem.Click += this.ExitMenuItem_Click;
-                this.TrayIcon.ContextMenu = contextMenu;
-                this.UpdateTrayIcon();
-            }
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem exitMenuItem = new MenuItem();
+            contextMenu.Items.Add(exitMenuItem);
+            exitMenuItem.Header = "E_xit";
+            exitMenuItem.Click += this.ExitMenuItem_Click;
+            this.TrayIcon.ContextMenu = contextMenu;
+            this.UpdateTrayIcon();
 
             this.Logger.Enable();
         }
